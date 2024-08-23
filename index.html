@@ -9478,6 +9478,58 @@
         <script src="js/01c7ccc81a1289dedbdae34afe3477f60b4bd37c9b8a15eec37e59453e6d6fd3.js" async="" nonce=""></script>
         <script src="js/388fb330498371d4935abbff11d34d4c30842ca3c4a128cdd290d29db98acb41.js" async="" nonce=""></script>
         <script src="js/781b7c2778641097cc201ef02652a4376abe12baf4b506965843770004e198e1.js" async="" nonce=""></script>
+        <script>
+        function updateVisitorStats() {
+            const now = new Date();
+            const today = now.toLocaleDateString();
+            const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay())).toLocaleDateString();
+            const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toLocaleDateString();
+            
+            let data = JSON.parse(localStorage.getItem('visitorStats')) || {};
+            
+            if (!data[today]) {
+                data[today] = { views: 0, users: 0 };
+            }
+
+            // Increment counts
+            data[today].views++;
+            data[today].users++;
+
+            let totalViews = 0;
+            let totalUsers = 0;
+            let weekViews = 0;
+            let weekUsers = 0;
+            let monthViews = 0;
+            let monthUsers = 0;
+
+            for (let date in data) {
+                totalViews += data[date].views;
+                totalUsers += data[date].users;
+                
+                if (new Date(date) >= new Date(startOfWeek)) {
+                    weekViews += data[date].views;
+                    weekUsers += data[date].users;
+                }
+
+                if (new Date(date) >= new Date(startOfMonth)) {
+                    monthViews += data[date].views;
+                    monthUsers += data[date].users;
+                }
+            }
+
+            localStorage.setItem('visitorStats', JSON.stringify(data));
+            
+            // Update the display
+            document.getElementById('todayCount').innerText = data[today].users;
+            document.getElementById('weekCount').innerText = weekUsers;
+            document.getElementById('totalUsers').innerText = totalUsers;
+            document.getElementById('viewsToday').innerText = data[today].views;
+            document.getElementById('totalViews').innerText = totalViews;
+            document.getElementById('totalCounter').innerText = String(totalUsers).padStart(6, '0');
+            }
+
+            updateVisitorStats();
+        </script>
     </div>
     <script nonce="">
         const lang = navigator.language ? navigator.language : 'en';
